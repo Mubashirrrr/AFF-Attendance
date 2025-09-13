@@ -3,7 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Attendance Upload</title>
+    <title>Attendance Upload System</title>
+    <meta name="description" content="Upload attendance files and extract roll numbers automatically">
     <style>
         * {
             margin: 0;
@@ -22,72 +23,194 @@
         }
 
         .container {
-            background: white;
-            border-radius: 15px;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
             padding: 40px;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
-            max-width: 500px;
+            box-shadow: 0 25px 50px rgba(0,0,0,0.15);
+            max-width: 650px;
             width: 100%;
             text-align: center;
         }
 
+        .header {
+            margin-bottom: 30px;
+        }
+
         h1 {
             color: #333;
-            margin-bottom: 30px;
-            font-size: 2em;
+            font-size: 2.2em;
+            margin-bottom: 10px;
+            font-weight: 700;
+        }
+
+        .subtitle {
+            color: #666;
+            font-size: 1.1em;
+            margin-bottom: 20px;
+        }
+
+        .deployment-info {
+            background: linear-gradient(135deg, #e8f4fd 0%, #f0f8ff 100%);
+            border: 1px solid #4a90e2;
+            border-radius: 12px;
+            padding: 15px;
+            margin-bottom: 25px;
+            font-size: 14px;
+        }
+
+        .deployment-info.local {
+            background: linear-gradient(135deg, #fff3cd 0%, #fef9e7 100%);
+            border-color: #f0ad4e;
+        }
+
+        .deployment-info h4 {
+            color: #4a90e2;
+            margin-bottom: 8px;
+        }
+
+        .deployment-info.local h4 {
+            color: #8a6d3b;
         }
 
         .file-upload-area {
-            border: 3px dashed #ccc;
-            border-radius: 10px;
-            padding: 40px 20px;
-            margin-bottom: 20px;
+            border: 3px dashed #ddd;
+            border-radius: 15px;
+            padding: 50px 30px;
+            margin-bottom: 25px;
             cursor: pointer;
             transition: all 0.3s ease;
+            background: linear-gradient(135deg, #f8f9ff 0%, #ffffff 100%);
         }
 
         .file-upload-area:hover {
             border-color: #667eea;
-            background: #f0f4ff;
+            background: linear-gradient(135deg, #e8f0fe 0%, #f0f4ff 100%);
+            transform: translateY(-2px);
         }
 
         .file-upload-area.dragover {
             border-color: #667eea;
-            background: #e8f0fe;
+            background: linear-gradient(135deg, #e8f0fe 0%, #f0f4ff 100%);
             transform: scale(1.02);
         }
 
         .upload-icon {
-            font-size: 3em;
+            font-size: 4em;
             color: #ccc;
-            margin-bottom: 15px;
+            margin-bottom: 20px;
+            transition: all 0.3s ease;
         }
 
         .file-upload-area:hover .upload-icon {
             color: #667eea;
+            transform: scale(1.1);
+        }
+
+        .upload-text {
+            font-size: 1.2em;
+            margin-bottom: 10px;
+            font-weight: 600;
+        }
+
+        .upload-subtext {
+            color: #667eea;
+            font-size: 1em;
         }
 
         input[type="file"] {
             display: none;
         }
 
+        .file-info {
+            background: linear-gradient(135deg, #e8f5e8 0%, #f0fff0 100%);
+            border: 1px solid #4caf50;
+            border-radius: 12px;
+            padding: 20px;
+            margin: 20px 0;
+            display: none;
+            text-align: left;
+        }
+
+        .file-info.show {
+            display: block;
+        }
+
+        .file-info h4 {
+            color: #2e7d32;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+
+        .file-details {
+            display: grid;
+            grid-template-columns: auto 1fr;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        .file-details strong {
+            color: #333;
+        }
+
+        .roll-numbers-container {
+            margin-top: 15px;
+        }
+
+        .roll-numbers {
+            max-height: 120px;
+            overflow-y: auto;
+            padding: 10px;
+            background: white;
+            border-radius: 8px;
+            border: 1px solid #ddd;
+        }
+
+        .roll-number-tag {
+            display: inline-block;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 4px 12px;
+            margin: 3px;
+            border-radius: 15px;
+            font-size: 12px;
+            font-weight: 500;
+        }
+
         .upload-btn {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
-            padding: 15px 30px;
+            padding: 18px 40px;
             border: none;
-            border-radius: 8px;
-            font-size: 16px;
+            border-radius: 12px;
+            font-size: 18px;
             font-weight: 600;
             cursor: pointer;
             transition: all 0.3s ease;
-            margin-top: 20px;
+            margin-top: 25px;
             width: 100%;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .upload-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            transition: left 0.5s;
+        }
+
+        .upload-btn:hover::before {
+            left: 100%;
         }
 
         .upload-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
+            transform: translateY(-3px);
+            box-shadow: 0 15px 35px rgba(102, 126, 234, 0.4);
         }
 
         .upload-btn:disabled {
@@ -97,22 +220,13 @@
             box-shadow: none;
         }
 
-        .file-info {
-            background: #e8f5e8;
-            border: 1px solid #4caf50;
-            border-radius: 8px;
-            padding: 15px;
-            margin: 15px 0;
+        .upload-btn:disabled::before {
             display: none;
-        }
-
-        .file-info.show {
-            display: block;
         }
 
         .loading {
             display: none;
-            margin: 20px 0;
+            margin: 25px 0;
         }
 
         .loading.show {
@@ -123,10 +237,10 @@
             border: 4px solid #f3f3f3;
             border-top: 4px solid #667eea;
             border-radius: 50%;
-            width: 40px;
-            height: 40px;
+            width: 50px;
+            height: 50px;
             animation: spin 1s linear infinite;
-            margin: 0 auto 15px;
+            margin: 0 auto 20px;
         }
 
         @keyframes spin {
@@ -136,19 +250,20 @@
 
         .result {
             display: none;
-            padding: 20px;
-            border-radius: 8px;
-            margin-top: 20px;
+            padding: 25px;
+            border-radius: 12px;
+            margin-top: 25px;
+            text-align: left;
         }
 
         .result.success {
-            background: #e8f5e8;
+            background: linear-gradient(135deg, #e8f5e8 0%, #f0fff0 100%);
             border: 1px solid #4caf50;
             color: #2e7d32;
         }
 
         .result.error {
-            background: #ffe8e8;
+            background: linear-gradient(135deg, #ffe8e8 0%, #fff0f0 100%);
             border: 1px solid #f44336;
             color: #c62828;
         }
@@ -157,58 +272,142 @@
             display: block;
         }
 
-        .roll-numbers {
-            margin-top: 10px;
-            text-align: left;
-            font-size: 14px;
+        .result h3 {
+            margin-bottom: 15px;
+            text-align: center;
         }
 
-        .roll-number-tag {
-            display: inline-block;
-            background: #667eea;
-            color: white;
-            padding: 2px 8px;
-            margin: 2px;
+        .cors-troubleshoot {
+            background: linear-gradient(135deg, #fff3cd 0%, #fef9e7 100%);
+            border: 1px solid #ffc107;
             border-radius: 12px;
+            padding: 20px;
+            margin-top: 20px;
+            display: none;
+            text-align: left;
+        }
+
+        .cors-troubleshoot.show {
+            display: block;
+        }
+
+        .cors-troubleshoot h4 {
+            color: #856404;
+            margin-bottom: 15px;
+        }
+
+        .cors-troubleshoot ol {
+            margin-left: 20px;
+            color: #856404;
+        }
+
+        .cors-troubleshoot li {
+            margin-bottom: 8px;
+        }
+
+        .cors-troubleshoot code {
+            background: rgba(0,0,0,0.1);
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-family: 'Courier New', monospace;
+        }
+
+        .environment-detector {
             font-size: 12px;
+            color: #666;
+            margin-top: 20px;
+            padding: 10px;
+            background: rgba(0,0,0,0.05);
+            border-radius: 8px;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                margin: 10px;
+                padding: 30px 25px;
+            }
+            
+            h1 {
+                font-size: 1.8em;
+            }
+            
+            .file-upload-area {
+                padding: 40px 20px;
+            }
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1>📊 Upload Attendance</h1>
+        <div class="header">
+            <h1>📊 Attendance Upload System</h1>
+            <p class="subtitle">Automated roll number extraction and processing</p>
+        </div>
+
+        <div class="deployment-info" id="deploymentInfo">
+            <h4 id="deploymentTitle">🚀 Production Ready</h4>
+            <p id="deploymentMessage">This app is optimized for Vercel deployment with CORS handling.</p>
+        </div>
         
         <div class="file-upload-area" id="fileUploadArea">
             <div class="upload-icon">📁</div>
-            <p><strong>Drop your .txt file here</strong></p>
-            <p style="color: #667eea;">or click to browse</p>
+            <p class="upload-text">Drop your attendance .txt file here</p>
+            <p class="upload-subtext">or click to browse</p>
             <input type="file" id="fileInput" accept=".txt" />
         </div>
 
         <div class="file-info" id="fileInfo">
-            <h4>✅ File ready to upload</h4>
-            <p><strong>File:</strong> <span id="fileName"></span></p>
-            <p><strong>Roll numbers found:</strong> <span id="rollCount">0</span></p>
-            <div class="roll-numbers" id="rollNumbers"></div>
+            <h4>✅ File Ready for Processing</h4>
+            <div class="file-details">
+                <strong>File Name:</strong>
+                <span id="fileName"></span>
+                <strong>File Size:</strong>
+                <span id="fileSize"></span>
+                <strong>Roll Numbers:</strong>
+                <span id="rollCount">0</span>
+            </div>
+            <div class="roll-numbers-container">
+                <strong>Detected Roll Numbers:</strong>
+                <div class="roll-numbers" id="rollNumbers"></div>
+            </div>
         </div>
 
         <button class="upload-btn" id="uploadBtn" disabled>
-            🚀 Send to Process
+            🚀 Process Attendance Data
         </button>
 
         <div class="loading" id="loading">
             <div class="spinner"></div>
-            <p>Sending file...</p>
+            <p><strong>Processing your file...</strong></p>
+            <p>Sending data to n8n workflow</p>
         </div>
 
         <div class="result" id="result">
             <h3 id="resultTitle"></h3>
-            <p id="resultMessage"></p>
+            <div id="resultMessage"></div>
+        </div>
+
+        <div class="cors-troubleshoot" id="corsHelp">
+            <h4>🛠️ CORS Configuration Required</h4>
+            <p><strong>To fix this issue, configure your n8n webhook:</strong></p>
+            <ol>
+                <li>Open your n8n Webhook node</li>
+                <li>Click <code>Add Option</code> → <code>Allowed Origins (CORS)</code></li>
+                <li>Set the value to: <code id="suggestedOrigin">*</code></li>
+                <li>Save the workflow and ensure it's <strong>ACTIVE</strong></li>
+                <li>Try uploading again</li>
+            </ol>
+            <p><small><strong>Current origin:</strong> <span id="currentOrigin"></span></small></p>
+        </div>
+
+        <div class="environment-detector">
+            <strong>Environment:</strong> <span id="environmentInfo"></span><br>
+            <strong>Webhook URL:</strong> <span id="webhookUrl"></span>
         </div>
     </div>
 
     <script>
-        // Configuration - Replace with your actual n8n webhook URL
+        // Configuration
         const N8N_WEBHOOK_URL = 'https://n8n.srv970132.hstgr.cloud/webhook-test/cc312adc-af32-48d3-88c2-af22dae286ff';
 
         // Global variables
@@ -223,6 +422,52 @@
         const uploadBtn = document.getElementById('uploadBtn');
         const loading = document.getElementById('loading');
         const result = document.getElementById('result');
+        const corsHelp = document.getElementById('corsHelp');
+        const deploymentInfo = document.getElementById('deploymentInfo');
+
+        // Environment detection
+        function detectEnvironment() {
+            const isLocalhost = window.location.hostname === 'localhost' || 
+                               window.location.hostname === '127.0.0.1' || 
+                               window.location.hostname === '';
+            const isVercel = window.location.hostname.includes('vercel.app');
+            const isFile = window.location.protocol === 'file:';
+
+            let env, origin, deploymentClass = '';
+
+            if (isFile) {
+                env = 'Local File';
+                origin = 'file://';
+                deploymentClass = 'local';
+                document.getElementById('deploymentTitle').textContent = '⚠️ Local File System';
+                document.getElementById('deploymentMessage').textContent = 'Running from local file. Deploy to Vercel for best experience.';
+            } else if (isLocalhost) {
+                env = 'Local Development';
+                origin = window.location.origin;
+                deploymentClass = 'local';
+                document.getElementById('deploymentTitle').textContent = '🔧 Local Development';
+                document.getElementById('deploymentMessage').textContent = 'Testing locally. Ready for Vercel deployment.';
+            } else if (isVercel) {
+                env = 'Vercel Production';
+                origin = window.location.origin;
+                document.getElementById('deploymentTitle').textContent = '🚀 Production (Vercel)';
+                document.getElementById('deploymentMessage').textContent = 'Deployed on Vercel with proper HTTPS and CORS support.';
+            } else {
+                env = 'Production';
+                origin = window.location.origin;
+            }
+
+            deploymentInfo.className = `deployment-info ${deploymentClass}`;
+            document.getElementById('environmentInfo').textContent = env;
+            document.getElementById('currentOrigin').textContent = origin;
+            document.getElementById('suggestedOrigin').textContent = origin === 'file://' ? '*' : origin;
+            document.getElementById('webhookUrl').textContent = N8N_WEBHOOK_URL;
+
+            return { env, origin, isFile, isLocalhost, isVercel };
+        }
+
+        // Initialize environment detection
+        const environment = detectEnvironment();
 
         // File upload handling
         fileUploadArea.addEventListener('click', () => fileInput.click());
@@ -258,7 +503,7 @@
 
         function handleFile(file) {
             if (!file.name.toLowerCase().endsWith('.txt')) {
-                alert('Please select a .txt file');
+                alert('Please select a .txt file containing attendance data');
                 return;
             }
 
@@ -272,30 +517,60 @@
                 uploadBtn.disabled = false;
             };
             
+            reader.onerror = function() {
+                alert('Error reading file. Please try again.');
+            };
+            
             reader.readAsText(file);
         }
 
         function displayFileInfo(file) {
             document.getElementById('fileName').textContent = file.name;
+            document.getElementById('fileSize').textContent = formatFileSize(file.size);
             fileInfo.classList.add('show');
         }
 
+        function formatFileSize(bytes) {
+            if (bytes === 0) return '0 Bytes';
+            const k = 1024;
+            const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+            const i = Math.floor(Math.log(bytes) / Math.log(k));
+            return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+        }
+
         function analyzeRollNumbers() {
-            // Regex to find roll numbers in format AFF-AW[F|M]25-001 OR AFF-AQ[W][F|M]-001
-            const rollRegex = /AFF-A[QW][WFM][MF]?25?-\d{3}/g;
-            foundRollNumbers = [...new Set(fileContent.match(rollRegex) || [])];
+            // Enhanced regex patterns for different roll number formats
+            const rollRegexes = [
+                /AFF-A[QW][WFM][MF]?25?-\d{3}/g,        // AFF-AWFM25-001
+                /AFF-[A-Z]{2,3}[0-9]{2,4}-[0-9]{3}/g,   // AFF-AWF25-001
+                /[A-Z]{3,4}-[A-Z]{2,4}[0-9]{2,4}-[0-9]{3}/g // Generic pattern
+            ];
+            
+            const allMatches = new Set();
+            rollRegexes.forEach(regex => {
+                const matches = fileContent.match(regex) || [];
+                matches.forEach(match => allMatches.add(match.trim()));
+            });
+            
+            foundRollNumbers = Array.from(allMatches).sort();
             
             document.getElementById('rollCount').textContent = foundRollNumbers.length;
             
             // Display found roll numbers
             const rollContainer = document.getElementById('rollNumbers');
-            rollContainer.innerHTML = foundRollNumbers
-                .slice(0, 10) // Show first 10
-                .map(roll => `<span class="roll-number-tag">${roll}</span>`)
-                .join('');
+            const displayLimit = 20;
             
-            if (foundRollNumbers.length > 10) {
-                rollContainer.innerHTML += `<span class="roll-number-tag">+${foundRollNumbers.length - 10} more</span>`;
+            if (foundRollNumbers.length === 0) {
+                rollContainer.innerHTML = '<span style="color: #999; font-style: italic;">No roll numbers detected. Check file format.</span>';
+            } else {
+                rollContainer.innerHTML = foundRollNumbers
+                    .slice(0, displayLimit)
+                    .map(roll => `<span class="roll-number-tag">${roll}</span>`)
+                    .join('');
+                
+                if (foundRollNumbers.length > displayLimit) {
+                    rollContainer.innerHTML += `<span class="roll-number-tag" style="background: #999;">+${foundRollNumbers.length - displayLimit} more</span>`;
+                }
             }
         }
 
@@ -303,54 +578,131 @@
         uploadBtn.addEventListener('click', sendToWebhook);
 
         async function sendToWebhook() {
+            if (foundRollNumbers.length === 0) {
+                alert('No roll numbers detected in the file. Please check the file format.');
+                return;
+            }
+
             loading.classList.add('show');
             result.classList.remove('show');
+            corsHelp.classList.remove('show');
             uploadBtn.disabled = true;
 
             const payload = {
                 fileName: uploadedFile.name,
                 fileContent: fileContent,
                 rollNumbers: foundRollNumbers,
-                uploadTime: new Date().toISOString()
+                rollCount: foundRollNumbers.length,
+                uploadTime: new Date().toISOString(),
+                environment: environment.env,
+                origin: environment.origin,
+                fileSize: uploadedFile.size,
+                metadata: {
+                    userAgent: navigator.userAgent,
+                    timestamp: Date.now(),
+                    version: '2.0'
+                }
             };
 
             try {
+                console.log('Sending payload to n8n:', payload);
+                
                 const response = await fetch(N8N_WEBHOOK_URL, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
+                        'Accept': 'application/json, text/plain, */*',
+                        'Origin': environment.origin
                     },
-                    body: JSON.stringify(payload)
+                    body: JSON.stringify(payload),
+                    mode: 'cors',
+                    credentials: 'omit'
                 });
 
+                console.log('Response received:', response.status, response.statusText);
+                console.log('Response headers:', Object.fromEntries(response.headers.entries()));
+
                 if (response.ok) {
-                    const responseData = await response.json();
-                    showResult('success', '✅ File sent successfully!', responseData);
+                    const responseData = await response.text();
+                    console.log('Response data:', responseData);
+                    
+                    let parsedData;
+                    try {
+                        parsedData = JSON.parse(responseData);
+                    } catch {
+                        parsedData = { message: responseData || 'Success' };
+                    }
+                    
+                    showResult('success', '✅ Attendance Data Processed Successfully!', {
+                        rollCount: foundRollNumbers.length,
+                        fileName: uploadedFile.name,
+                        response: parsedData
+                    });
                 } else {
-                    throw new Error(`Server error: ${response.status}`);
+                    const errorText = await response.text();
+                    throw new Error(`HTTP ${response.status}: ${response.statusText}\n${errorText}`);
                 }
             } catch (error) {
-                showResult('error', '❌ Upload failed', { error: error.message });
+                console.error('Upload error:', error);
+                
+                if (error.name === 'TypeError' || 
+                    error.message.includes('Failed to fetch') ||
+                    error.message.includes('CORS') ||
+                    error.message.includes('NetworkError')) {
+                    showCorsError(error);
+                } else {
+                    showResult('error', '❌ Upload Failed', {
+                        error: error.message,
+                        suggestion: 'Check your n8n workflow is active and the webhook URL is correct.'
+                    });
+                }
             }
 
             loading.classList.remove('show');
             uploadBtn.disabled = false;
         }
 
+        function showCorsError(error) {
+            showResult('error', '🚫 CORS Configuration Required', {
+                error: error.message,
+                rollCount: foundRollNumbers.length,
+                needsConfig: true
+            });
+            corsHelp.classList.add('show');
+        }
+
         function showResult(type, title, data) {
             result.className = `result ${type} show`;
             document.getElementById('resultTitle').textContent = title;
             
+            let message = '';
+            
             if (type === 'success') {
-                document.getElementById('resultMessage').innerHTML = `
-                    File processed successfully!<br>
-                    <strong>Roll numbers found:</strong> ${foundRollNumbers.length}<br>
-                    <strong>Processing completed at:</strong> ${new Date().toLocaleTimeString()}
+                message = `
+                    <p><strong>✅ File processed successfully!</strong></p>
+                    <p><strong>Roll numbers processed:</strong> ${data.rollCount}</p>
+                    <p><strong>File:</strong> ${data.fileName}</p>
+                    <p><strong>Processing time:</strong> ${new Date().toLocaleTimeString()}</p>
+                    ${data.response && data.response.message ? `<p><strong>Response:</strong> ${data.response.message}</p>` : ''}
+                    <p><em>Data has been sent to your n8n workflow for further processing.</em></p>
                 `;
             } else {
-                document.getElementById('resultMessage').textContent = data.error || 'An error occurred while uploading';
+                message = `
+                    <p><strong>❌ Error Details:</strong></p>
+                    <p>${data.error}</p>
+                    ${data.rollCount ? `<p><strong>Roll numbers ready:</strong> ${data.rollCount}</p>` : ''}
+                    ${data.suggestion ? `<p><em>${data.suggestion}</em></p>` : ''}
+                    ${data.needsConfig ? '<p><strong>⬇️ See configuration steps below</strong></p>' : ''}
+                `;
             }
+            
+            document.getElementById('resultMessage').innerHTML = message;
         }
+
+        // Initialize
+        console.log('Attendance Upload System initialized');
+        console.log('Environment:', environment);
+        console.log('Webhook URL:', N8N_WEBHOOK_URL);
     </script>
 </body>
 </html>
