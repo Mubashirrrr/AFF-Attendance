@@ -451,7 +451,7 @@
                 env = 'Vercel Production';
                 origin = window.location.origin;
                 document.getElementById('deploymentTitle').textContent = '🚀 Production (Vercel)';
-                document.getElementById('deploymentMessage').textContent = 'Deployed on Vercel with proper HTTPS and CORS support.';
+                document.getElementById('deploymentMessage').innerHTML = `Deployed on Vercel ✅<br><small>URL: ${origin}</small>`;
             } else {
                 env = 'Production';
                 origin = window.location.origin;
