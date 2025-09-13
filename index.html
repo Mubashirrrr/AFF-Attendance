@@ -122,6 +122,109 @@
             display: none;
         }
 
+        /* DATE SELECTOR CARD - ALWAYS VISIBLE */
+        .date-selector-card {
+            background: linear-gradient(135deg, #f0f8ff 0%, #e6f3ff 100%);
+            border: 2px solid #4a90e2;
+            border-radius: 15px;
+            padding: 25px;
+            margin: 25px 0;
+            display: block; /* Always visible */
+            transition: all 0.3s ease;
+        }
+
+        .date-selector-card:hover {
+            border-color: #667eea;
+            box-shadow: 0 8px 25px rgba(74, 144, 226, 0.2);
+            transform: translateY(-2px);
+        }
+
+        .date-selector-header {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .calendar-icon {
+            font-size: 1.8em;
+        }
+
+        .date-selector-header h4 {
+            color: #4a90e2;
+            margin: 0;
+            font-size: 1.2em;
+            font-weight: 600;
+        }
+
+        .date-input-row {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 15px;
+            flex-wrap: wrap;
+        }
+
+        .date-input {
+            padding: 15px 20px;
+            border: 2px solid #4a90e2;
+            border-radius: 12px;
+            font-size: 16px;
+            background: white;
+            color: #333;
+            transition: all 0.3s ease;
+            min-width: 180px;
+            font-family: inherit;
+            font-weight: 500;
+        }
+
+        .date-input:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.15);
+            transform: translateY(-1px);
+        }
+
+        .today-btn {
+            padding: 15px 25px;
+            background: linear-gradient(135deg, #4a90e2 0%, #357abd 100%);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            white-space: nowrap;
+        }
+
+        .today-btn:hover {
+            background: linear-gradient(135deg, #357abd 0%, #2968a3 100%);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(74, 144, 226, 0.3);
+        }
+
+        .date-display {
+            text-align: center;
+            padding: 15px;
+            background: rgba(255, 255, 255, 0.8);
+            border-radius: 10px;
+            color: #333;
+            font-weight: 500;
+            font-size: 1.1em;
+        }
+
+        .date-preview-text {
+            color: #4a90e2;
+            font-weight: 700;
+            font-size: 1.2em;
+        }
+
         .file-info {
             background: linear-gradient(135deg, #e8f5e8 0%, #f0fff0 100%);
             border: 1px solid #4caf50;
@@ -334,6 +437,21 @@
             .file-upload-area {
                 padding: 40px 20px;
             }
+
+            .date-input-row {
+                flex-direction: column;
+                gap: 15px;
+            }
+
+            .date-input {
+                width: 100%;
+                min-width: auto;
+            }
+
+            .today-btn {
+                width: 100%;
+                justify-content: center;
+            }
         }
     </style>
 </head>
@@ -354,6 +472,21 @@
             <p class="upload-text">Drop your attendance .txt file here</p>
             <p class="upload-subtext">or click to browse</p>
             <input type="file" id="fileInput" accept=".txt" />
+        </div>
+
+        <!-- DATE SELECTOR - ALWAYS VISIBLE -->
+        <div class="date-selector-card">
+            <div class="date-selector-header">
+                <span class="calendar-icon">📅</span>
+                <h4>Select Attendance Date</h4>
+            </div>
+            <div class="date-input-row">
+                <input type="date" id="attendanceDate" class="date-input" title="Select attendance date">
+                <button type="button" id="todayBtn" class="today-btn">📅 Today</button>
+            </div>
+            <div class="date-display">
+                Selected: <span id="datePreview" class="date-preview-text">Not selected</span>
+            </div>
         </div>
 
         <div class="file-info" id="fileInfo">
@@ -407,8 +540,8 @@
     </div>
 
     <script>
-        // Configuration
-        const N8N_WEBHOOK_URL = 'https://n8n.srv970132.hstgr.cloud/webhook-test/cc312adc-af32-48d3-88c2-af22dae286ff';
+        // Configuration - Now using WORKING Production URL
+        const N8N_WEBHOOK_URL = 'https://n8n.srv970132.hstgr.cloud/webhook/cc312adc-af32-48d3-88c2-af22dae286ff'; // Production - WORKING!
 
         // Global variables
         let uploadedFile = null;
@@ -419,6 +552,9 @@
         const fileUploadArea = document.getElementById('fileUploadArea');
         const fileInput = document.getElementById('fileInput');
         const fileInfo = document.getElementById('fileInfo');
+        const attendanceDate = document.getElementById('attendanceDate');
+        const todayBtn = document.getElementById('todayBtn');
+        const datePreview = document.getElementById('datePreview');
         const uploadBtn = document.getElementById('uploadBtn');
         const loading = document.getElementById('loading');
         const result = document.getElementById('result');
@@ -469,6 +605,49 @@
         // Initialize environment detection
         const environment = detectEnvironment();
 
+        // Date handling
+        function setTodayDate() {
+            const today = new Date();
+            const formattedDate = today.toISOString().split('T')[0];
+            attendanceDate.value = formattedDate;
+            updateDatePreview();
+        }
+
+        function updateDatePreview() {
+            const dateValue = attendanceDate.value;
+            if (dateValue) {
+                const date = new Date(dateValue);
+                // Add one day to handle timezone offset
+                date.setDate(date.getDate() + 1);
+                const day = date.getDate().toString().padStart(2, '0');
+                const month = (date.getMonth() + 1).toString().padStart(2, '0');
+                const year = date.getFullYear();
+                const formattedDate = `${day}/${month}/${year}`;
+                datePreview.textContent = formattedDate;
+            } else {
+                datePreview.textContent = 'Not selected';
+            }
+        }
+
+        function formatDateForAPI(dateString) {
+            if (!dateString) return null;
+            const date = new Date(dateString);
+            // Add one day to handle timezone offset
+            date.setDate(date.getDate() + 1);
+            const day = date.getDate().toString().padStart(2, '0');
+            const month = (date.getMonth() + 1).toString().padStart(2, '0');
+            const year = date.getFullYear();
+            return `${day}/${month}/${year}`;
+        }
+
+        // Event listeners for date
+        todayBtn.addEventListener('click', setTodayDate);
+        attendanceDate.addEventListener('change', updateDatePreview);
+
+        // Set today as default and make upload button available
+        setTodayDate();
+        uploadBtn.disabled = false; // Enable button by default since date is set
+
         // File upload handling
         fileUploadArea.addEventListener('click', () => fileInput.click());
         fileUploadArea.addEventListener('dragover', handleDragOver);
@@ -514,7 +693,7 @@
                 fileContent = e.target.result;
                 displayFileInfo(file);
                 analyzeRollNumbers();
-                uploadBtn.disabled = false;
+                // Button is already enabled since date is set
             };
             
             reader.onerror = function() {
@@ -578,6 +757,17 @@
         uploadBtn.addEventListener('click', sendToWebhook);
 
         async function sendToWebhook() {
+            const selectedDate = attendanceDate.value;
+            if (!selectedDate) {
+                alert('Please select an attendance date.');
+                return;
+            }
+
+            if (!uploadedFile) {
+                alert('Please upload an attendance file first.');
+                return;
+            }
+
             if (foundRollNumbers.length === 0) {
                 alert('No roll numbers detected in the file. Please check the file format.');
                 return;
@@ -588,11 +778,15 @@
             corsHelp.classList.remove('show');
             uploadBtn.disabled = true;
 
+            const formattedDate = formatDateForAPI(selectedDate);
+
             const payload = {
                 fileName: uploadedFile.name,
                 fileContent: fileContent,
                 rollNumbers: foundRollNumbers,
                 rollCount: foundRollNumbers.length,
+                attendanceDate: formattedDate, // Format: "15/09/2025"
+                attendanceDateISO: selectedDate, // ISO format for backup: "2025-09-15"
                 uploadTime: new Date().toISOString(),
                 environment: environment.env,
                 origin: environment.origin,
@@ -600,7 +794,8 @@
                 metadata: {
                     userAgent: navigator.userAgent,
                     timestamp: Date.now(),
-                    version: '2.0'
+                    version: '2.1',
+                    dateFormat: 'DD/MM/YYYY'
                 }
             };
 
@@ -636,6 +831,7 @@
                     showResult('success', '✅ Attendance Data Processed Successfully!', {
                         rollCount: foundRollNumbers.length,
                         fileName: uploadedFile.name,
+                        attendanceDate: formattedDate,
                         response: parsedData
                     });
                 } else {
@@ -684,26 +880,4 @@
                     <p><strong>File:</strong> ${data.fileName}</p>
                     <p><strong>Attendance Date:</strong> ${data.attendanceDate}</p>
                     <p><strong>Processing time:</strong> ${new Date().toLocaleTimeString()}</p>
-                    ${data.response && data.response.message ? `<p><strong>Response:</strong> ${data.response.message}</p>` : ''}
-                    <p><em>Attendance data has been sent to your n8n workflow for further processing.</em></p>
-                `;
-            } else {
-                message = `
-                    <p><strong>❌ Error Details:</strong></p>
-                    <p>${data.error}</p>
-                    ${data.rollCount ? `<p><strong>Roll numbers ready:</strong> ${data.rollCount}</p>` : ''}
-                    ${data.suggestion ? `<p><em>${data.suggestion}</em></p>` : ''}
-                    ${data.needsConfig ? '<p><strong>⬇️ See configuration steps below</strong></p>' : ''}
-                `;
-            }
-            
-            document.getElementById('resultMessage').innerHTML = message;
-        }
-
-        // Initialize
-        console.log('Attendance Upload System initialized');
-        console.log('Environment:', environment);
-        console.log('Webhook URL:', N8N_WEBHOOK_URL);
-    </script>
-</body>
-</html>
+                    ${data.response && data.response.message ? `<p
