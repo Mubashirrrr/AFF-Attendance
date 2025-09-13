@@ -616,12 +616,8 @@
         function updateDatePreview() {
             const dateValue = attendanceDate.value;
             if (dateValue) {
-                const date = new Date(dateValue);
-                // Add one day to handle timezone offset
-                date.setDate(date.getDate() + 1);
-                const day = date.getDate().toString().padStart(2, '0');
-                const month = (date.getMonth() + 1).toString().padStart(2, '0');
-                const year = date.getFullYear();
+                // Parse the date string directly without timezone issues
+                const [year, month, day] = dateValue.split('-');
                 const formattedDate = `${day}/${month}/${year}`;
                 datePreview.textContent = formattedDate;
             } else {
@@ -631,12 +627,8 @@
 
         function formatDateForAPI(dateString) {
             if (!dateString) return null;
-            const date = new Date(dateString);
-            // Add one day to handle timezone offset
-            date.setDate(date.getDate() + 1);
-            const day = date.getDate().toString().padStart(2, '0');
-            const month = (date.getMonth() + 1).toString().padStart(2, '0');
-            const year = date.getFullYear();
+            // Parse the date string directly without timezone issues
+            const [year, month, day] = dateString.split('-');
             return `${day}/${month}/${year}`;
         }
 
@@ -880,4 +872,27 @@
                     <p><strong>File:</strong> ${data.fileName}</p>
                     <p><strong>Attendance Date:</strong> ${data.attendanceDate}</p>
                     <p><strong>Processing time:</strong> ${new Date().toLocaleTimeString()}</p>
-                    ${data.response && data.response.message ? `<p
+                    ${data.response && data.response.message ? `<p><strong>Response:</strong> ${data.response.message}</p>` : ''}
+                    <p><em>Attendance data has been sent to your n8n workflow for further processing.</em></p>
+                `;
+            } else {
+                message = `
+                    <p><strong>❌ Error Details:</strong></p>
+                    <p>${data.error}</p>
+                    ${data.rollCount ? `<p><strong>Roll numbers ready:</strong> ${data.rollCount}</p>` : ''}
+                    ${data.suggestion ? `<p><em>${data.suggestion}</em></p>` : ''}
+                    ${data.needsConfig ? '<p><strong>⬇️ See configuration steps below</strong></p>' : ''}
+                `;
+            }
+            
+            document.getElementById('resultMessage').innerHTML = message;
+        }
+
+        // Initialize
+        console.log('Attendance Upload System initialized');
+        console.log('Environment:', environment);
+        console.log('Webhook URL:', N8N_WEBHOOK_URL);
+        console.log('Date selector should be visible!');
+    </script>
+</body>
+</html>
