@@ -408,7 +408,7 @@
 
     <script>
         // Configuration
-        const N8N_WEBHOOK_URL = 'https://n8n.srv970132.hstgr.cloud/webhook/cc312adc-af32-48d3-88c2-af22dae286ff';
+        const N8N_WEBHOOK_URL = 'https://n8n.srv970132.hstgr.cloud/webhook-test/cc312adc-af32-48d3-88c2-af22dae286ff';
 
         // Global variables
         let uploadedFile = null;
@@ -682,9 +682,10 @@
                     <p><strong>✅ File processed successfully!</strong></p>
                     <p><strong>Roll numbers processed:</strong> ${data.rollCount}</p>
                     <p><strong>File:</strong> ${data.fileName}</p>
+                    <p><strong>Attendance Date:</strong> ${data.attendanceDate}</p>
                     <p><strong>Processing time:</strong> ${new Date().toLocaleTimeString()}</p>
                     ${data.response && data.response.message ? `<p><strong>Response:</strong> ${data.response.message}</p>` : ''}
-                    <p><em>Data has been sent to your n8n workflow for further processing.</em></p>
+                    <p><em>Attendance data has been sent to your n8n workflow for further processing.</em></p>
                 `;
             } else {
                 message = `
