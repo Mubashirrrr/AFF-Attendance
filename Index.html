@@ -3,8 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Attendance Upload System</title>
+    <title>Al Furqan Forum - Attendance System</title>
     <meta name="description" content="Upload attendance files and extract roll numbers automatically">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         * {
             margin: 0;
@@ -14,7 +15,7 @@
 
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, #0e838d 0%, #0a6b75 50%, #085e67 100%);
             min-height: 100vh;
             display: flex;
             align-items: center;
@@ -22,215 +23,335 @@
             padding: 20px;
         }
 
-        .container {
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(10px);
-            border-radius: 20px;
-            padding: 40px;
-            box-shadow: 0 25px 50px rgba(0,0,0,0.15);
-            max-width: 650px;
+        /* Login Screen */
+        .login-container {
+            background: rgba(255, 255, 255, 0.98);
+            backdrop-filter: blur(15px);
+            border-radius: 25px;
+            padding: 50px;
+            box-shadow: 0 30px 60px rgba(0,0,0,0.2);
+            max-width: 450px;
             width: 100%;
             text-align: center;
+            border: 1px solid rgba(255,255,255,0.2);
+        }
+
+        .login-logo {
+            width: 120px;
+            height: 120px;
+            margin: 0 auto 30px;
+            background: linear-gradient(135deg, #0e838d 0%, #0a6b75 100%);
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 3em;
+            color: white;
+            box-shadow: 0 10px 30px rgba(14, 131, 141, 0.3);
+        }
+
+        .login-title {
+            color: #0e838d;
+            font-size: 2.2em;
+            font-weight: 700;
+            margin-bottom: 10px;
+        }
+
+        .login-subtitle {
+            color: #666;
+            font-size: 1.1em;
+            margin-bottom: 40px;
+        }
+
+        .login-form {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .login-input {
+            padding: 18px 25px;
+            border: 2px solid #e0e0e0;
+            border-radius: 15px;
+            font-size: 16px;
+            font-family: inherit;
+            transition: all 0.3s ease;
+            background: white;
+        }
+
+        .login-input:focus {
+            outline: none;
+            border-color: #0e838d;
+            box-shadow: 0 0 0 4px rgba(14, 131, 141, 0.15);
+            transform: translateY(-2px);
+        }
+
+        .login-btn {
+            background: linear-gradient(135deg, #0e838d 0%, #0a6b75 100%);
+            color: white;
+            padding: 18px;
+            border: none;
+            border-radius: 15px;
+            font-size: 18px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 10px;
+        }
+
+        .login-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 35px rgba(14, 131, 141, 0.4);
+        }
+
+        .login-error {
+            background: #ffe8e8;
+            color: #c62828;
+            padding: 15px;
+            border-radius: 12px;
+            margin-top: 20px;
+            border-left: 4px solid #f44336;
+            display: none;
+        }
+
+        /* Main Application */
+        .main-container {
+            background: rgba(255, 255, 255, 0.98);
+            backdrop-filter: blur(15px);
+            border-radius: 25px;
+            padding: 50px;
+            box-shadow: 0 30px 60px rgba(0,0,0,0.2);
+            max-width: 700px;
+            width: 100%;
+            text-align: center;
+            border: 1px solid rgba(255,255,255,0.2);
+            display: none;
         }
 
         .header {
-            margin-bottom: 30px;
+            margin-bottom: 40px;
+        }
+
+        .logo {
+            width: 100px;
+            height: 100px;
+            margin: 0 auto 25px;
+            background: linear-gradient(135deg, #0e838d 0%, #0a6b75 100%);
+            border-radius: 18px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2.5em;
+            color: white;
+            box-shadow: 0 10px 30px rgba(14, 131, 141, 0.3);
         }
 
         h1 {
-            color: #333;
-            font-size: 2.2em;
-            margin-bottom: 10px;
+            color: #0e838d;
+            font-size: 2.5em;
+            margin-bottom: 15px;
             font-weight: 700;
         }
 
         .subtitle {
             color: #666;
-            font-size: 1.1em;
+            font-size: 1.2em;
             margin-bottom: 20px;
         }
 
-        .deployment-info {
-            background: linear-gradient(135deg, #e8f4fd 0%, #f0f8ff 100%);
-            border: 1px solid #4a90e2;
-            border-radius: 12px;
-            padding: 15px;
-            margin-bottom: 25px;
+        .logout-btn {
+            position: absolute;
+            top: 25px;
+            right: 25px;
+            background: rgba(14, 131, 141, 0.1);
+            color: #0e838d;
+            border: 1px solid #0e838d;
+            padding: 10px 20px;
+            border-radius: 10px;
+            cursor: pointer;
             font-size: 14px;
+            font-weight: 600;
+            transition: all 0.3s ease;
         }
 
-        .deployment-info.local {
-            background: linear-gradient(135deg, #fff3cd 0%, #fef9e7 100%);
-            border-color: #f0ad4e;
-        }
-
-        .deployment-info h4 {
-            color: #4a90e2;
-            margin-bottom: 8px;
-        }
-
-        .deployment-info.local h4 {
-            color: #8a6d3b;
+        .logout-btn:hover {
+            background: #0e838d;
+            color: white;
         }
 
         .file-upload-area {
             border: 3px dashed #ddd;
-            border-radius: 15px;
-            padding: 50px 30px;
-            margin-bottom: 25px;
+            border-radius: 20px;
+            padding: 60px 40px;
+            margin-bottom: 30px;
             cursor: pointer;
             transition: all 0.3s ease;
-            background: linear-gradient(135deg, #f8f9ff 0%, #ffffff 100%);
+            background: linear-gradient(135deg, #f8fdfe 0%, #ffffff 100%);
         }
 
         .file-upload-area:hover {
-            border-color: #667eea;
-            background: linear-gradient(135deg, #e8f0fe 0%, #f0f4ff 100%);
-            transform: translateY(-2px);
+            border-color: #0e838d;
+            background: linear-gradient(135deg, #e8f7f8 0%, #f0fafb 100%);
+            transform: translateY(-3px);
+            box-shadow: 0 15px 40px rgba(14, 131, 141, 0.15);
         }
 
         .file-upload-area.dragover {
-            border-color: #667eea;
-            background: linear-gradient(135deg, #e8f0fe 0%, #f0f4ff 100%);
+            border-color: #0e838d;
+            background: linear-gradient(135deg, #e8f7f8 0%, #f0fafb 100%);
             transform: scale(1.02);
         }
 
         .upload-icon {
-            font-size: 4em;
+            font-size: 4.5em;
             color: #ccc;
-            margin-bottom: 20px;
+            margin-bottom: 25px;
             transition: all 0.3s ease;
+        }
+        
+        .upload-icon i {
+            font-size: 1em;
+        }
+        
+        .fas {
+            margin-right: 8px;
+        }
+        
+        .calendar-icon i {
+            font-size: 1.5em;
+            color: #0e838d;
         }
 
         .file-upload-area:hover .upload-icon {
-            color: #667eea;
+            color: #0e838d;
             transform: scale(1.1);
         }
 
         .upload-text {
-            font-size: 1.2em;
-            margin-bottom: 10px;
+            font-size: 1.3em;
+            margin-bottom: 12px;
             font-weight: 600;
+            color: #333;
         }
 
         .upload-subtext {
-            color: #667eea;
-            font-size: 1em;
+            color: #0e838d;
+            font-size: 1.1em;
+            font-weight: 500;
         }
 
         input[type="file"] {
             display: none;
         }
 
-        /* DATE SELECTOR CARD - ALWAYS VISIBLE */
         .date-selector-card {
-            background: linear-gradient(135deg, #f0f8ff 0%, #e6f3ff 100%);
-            border: 2px solid #4a90e2;
-            border-radius: 15px;
-            padding: 25px;
-            margin: 25px 0;
-            display: block; /* Always visible */
+            background: linear-gradient(135deg, #e8f7f8 0%, #f0fafb 100%);
+            border: 2px solid #0e838d;
+            border-radius: 20px;
+            padding: 30px;
+            margin: 30px 0;
             transition: all 0.3s ease;
         }
 
         .date-selector-card:hover {
-            border-color: #667eea;
-            box-shadow: 0 8px 25px rgba(74, 144, 226, 0.2);
-            transform: translateY(-2px);
+            border-color: #0a6b75;
+            box-shadow: 0 15px 40px rgba(14, 131, 141, 0.2);
+            transform: translateY(-3px);
         }
 
         .date-selector-header {
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 10px;
-            margin-bottom: 20px;
+            gap: 12px;
+            margin-bottom: 25px;
         }
 
         .calendar-icon {
-            font-size: 1.8em;
+            font-size: 2em;
+            color: #0e838d;
         }
 
         .date-selector-header h4 {
-            color: #4a90e2;
+            color: #0e838d;
             margin: 0;
-            font-size: 1.2em;
+            font-size: 1.3em;
             font-weight: 600;
         }
 
         .date-input-row {
             display: flex;
-            gap: 15px;
+            gap: 20px;
             align-items: center;
             justify-content: center;
-            margin-bottom: 15px;
+            margin-bottom: 20px;
             flex-wrap: wrap;
         }
 
         .date-input {
-            padding: 15px 20px;
-            border: 2px solid #4a90e2;
-            border-radius: 12px;
+            padding: 18px 25px;
+            border: 2px solid #0e838d;
+            border-radius: 15px;
             font-size: 16px;
             background: white;
             color: #333;
             transition: all 0.3s ease;
-            min-width: 180px;
+            min-width: 200px;
             font-family: inherit;
             font-weight: 500;
         }
 
         .date-input:focus {
             outline: none;
-            border-color: #667eea;
-            box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.15);
-            transform: translateY(-1px);
+            border-color: #0a6b75;
+            box-shadow: 0 0 0 4px rgba(14, 131, 141, 0.15);
+            transform: translateY(-2px);
         }
 
         .today-btn {
-            padding: 15px 25px;
-            background: linear-gradient(135deg, #4a90e2 0%, #357abd 100%);
+            padding: 18px 30px;
+            background: linear-gradient(135deg, #0e838d 0%, #0a6b75 100%);
             color: white;
             border: none;
-            border-radius: 12px;
-            font-size: 15px;
+            border-radius: 15px;
+            font-size: 16px;
             font-weight: 600;
             cursor: pointer;
             transition: all 0.3s ease;
             display: flex;
             align-items: center;
-            gap: 8px;
+            gap: 10px;
             white-space: nowrap;
         }
 
         .today-btn:hover {
-            background: linear-gradient(135deg, #357abd 0%, #2968a3 100%);
-            transform: translateY(-2px);
-            box-shadow: 0 8px 20px rgba(74, 144, 226, 0.3);
+            background: linear-gradient(135deg, #0a6b75 0%, #085e67 100%);
+            transform: translateY(-3px);
+            box-shadow: 0 12px 30px rgba(14, 131, 141, 0.4);
         }
 
         .date-display {
             text-align: center;
-            padding: 15px;
-            background: rgba(255, 255, 255, 0.8);
-            border-radius: 10px;
+            padding: 18px;
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 12px;
             color: #333;
             font-weight: 500;
             font-size: 1.1em;
         }
 
         .date-preview-text {
-            color: #4a90e2;
+            color: #0e838d;
             font-weight: 700;
-            font-size: 1.2em;
+            font-size: 1.3em;
         }
 
         .file-info {
-            background: linear-gradient(135deg, #e8f5e8 0%, #f0fff0 100%);
-            border: 1px solid #4caf50;
-            border-radius: 12px;
-            padding: 20px;
-            margin: 20px 0;
+            background: linear-gradient(135deg, #e8f7f8 0%, #f0fafb 100%);
+            border: 2px solid #0e838d;
+            border-radius: 20px;
+            padding: 25px;
+            margin: 25px 0;
             display: none;
             text-align: left;
         }
@@ -240,16 +361,17 @@
         }
 
         .file-info h4 {
-            color: #2e7d32;
-            margin-bottom: 15px;
+            color: #0e838d;
+            margin-bottom: 20px;
             text-align: center;
+            font-size: 1.2em;
         }
 
         .file-details {
             display: grid;
             grid-template-columns: auto 1fr;
-            gap: 10px;
-            margin-bottom: 15px;
+            gap: 15px;
+            margin-bottom: 20px;
         }
 
         .file-details strong {
@@ -257,40 +379,40 @@
         }
 
         .roll-numbers-container {
-            margin-top: 15px;
+            margin-top: 20px;
         }
 
         .roll-numbers {
-            max-height: 120px;
+            max-height: 140px;
             overflow-y: auto;
-            padding: 10px;
+            padding: 15px;
             background: white;
-            border-radius: 8px;
-            border: 1px solid #ddd;
+            border-radius: 12px;
+            border: 1px solid #e0e0e0;
         }
 
         .roll-number-tag {
             display: inline-block;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, #0e838d 0%, #0a6b75 100%);
             color: white;
-            padding: 4px 12px;
-            margin: 3px;
-            border-radius: 15px;
-            font-size: 12px;
+            padding: 6px 15px;
+            margin: 4px;
+            border-radius: 20px;
+            font-size: 13px;
             font-weight: 500;
         }
 
         .upload-btn {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, #0e838d 0%, #0a6b75 100%);
             color: white;
-            padding: 18px 40px;
+            padding: 22px 50px;
             border: none;
-            border-radius: 12px;
-            font-size: 18px;
+            border-radius: 18px;
+            font-size: 20px;
             font-weight: 600;
             cursor: pointer;
             transition: all 0.3s ease;
-            margin-top: 25px;
+            margin-top: 30px;
             width: 100%;
             position: relative;
             overflow: hidden;
@@ -312,8 +434,8 @@
         }
 
         .upload-btn:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 15px 35px rgba(102, 126, 234, 0.4);
+            transform: translateY(-4px);
+            box-shadow: 0 20px 45px rgba(14, 131, 141, 0.4);
         }
 
         .upload-btn:disabled {
@@ -329,7 +451,7 @@
 
         .loading {
             display: none;
-            margin: 25px 0;
+            margin: 30px 0;
         }
 
         .loading.show {
@@ -338,12 +460,12 @@
 
         .spinner {
             border: 4px solid #f3f3f3;
-            border-top: 4px solid #667eea;
+            border-top: 4px solid #0e838d;
             border-radius: 50%;
-            width: 50px;
-            height: 50px;
+            width: 60px;
+            height: 60px;
             animation: spin 1s linear infinite;
-            margin: 0 auto 20px;
+            margin: 0 auto 25px;
         }
 
         @keyframes spin {
@@ -353,21 +475,21 @@
 
         .result {
             display: none;
-            padding: 25px;
-            border-radius: 12px;
-            margin-top: 25px;
+            padding: 30px;
+            border-radius: 18px;
+            margin-top: 30px;
             text-align: left;
         }
 
         .result.success {
-            background: linear-gradient(135deg, #e8f5e8 0%, #f0fff0 100%);
-            border: 1px solid #4caf50;
-            color: #2e7d32;
+            background: linear-gradient(135deg, #e8f7f8 0%, #f0fafb 100%);
+            border: 2px solid #0e838d;
+            color: #0e838d;
         }
 
         .result.error {
             background: linear-gradient(135deg, #ffe8e8 0%, #fff0f0 100%);
-            border: 1px solid #f44336;
+            border: 2px solid #f44336;
             color: #c62828;
         }
 
@@ -376,71 +498,28 @@
         }
 
         .result h3 {
-            margin-bottom: 15px;
+            margin-bottom: 20px;
             text-align: center;
-        }
-
-        .cors-troubleshoot {
-            background: linear-gradient(135deg, #fff3cd 0%, #fef9e7 100%);
-            border: 1px solid #ffc107;
-            border-radius: 12px;
-            padding: 20px;
-            margin-top: 20px;
-            display: none;
-            text-align: left;
-        }
-
-        .cors-troubleshoot.show {
-            display: block;
-        }
-
-        .cors-troubleshoot h4 {
-            color: #856404;
-            margin-bottom: 15px;
-        }
-
-        .cors-troubleshoot ol {
-            margin-left: 20px;
-            color: #856404;
-        }
-
-        .cors-troubleshoot li {
-            margin-bottom: 8px;
-        }
-
-        .cors-troubleshoot code {
-            background: rgba(0,0,0,0.1);
-            padding: 2px 6px;
-            border-radius: 4px;
-            font-family: 'Courier New', monospace;
-        }
-
-        .environment-detector {
-            font-size: 12px;
-            color: #666;
-            margin-top: 20px;
-            padding: 10px;
-            background: rgba(0,0,0,0.05);
-            border-radius: 8px;
+            font-size: 1.3em;
         }
 
         @media (max-width: 768px) {
-            .container {
+            .main-container, .login-container {
                 margin: 10px;
-                padding: 30px 25px;
+                padding: 35px 25px;
             }
             
-            h1 {
-                font-size: 1.8em;
+            h1, .login-title {
+                font-size: 2em;
             }
             
             .file-upload-area {
-                padding: 40px 20px;
+                padding: 50px 25px;
             }
 
             .date-input-row {
                 flex-direction: column;
-                gap: 15px;
+                gap: 20px;
             }
 
             .date-input {
@@ -452,37 +531,61 @@
                 width: 100%;
                 justify-content: center;
             }
+
+            .logout-btn {
+                position: static;
+                margin-bottom: 20px;
+                width: fit-content;
+                margin-left: auto;
+                margin-right: auto;
+                display: block;
+            }
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <div class="header">
-            <h1>📊 Attendance Upload System</h1>
-            <p class="subtitle">Automated roll number extraction and processing</p>
+    <!-- Login Screen -->
+    <div class="login-container" id="loginContainer">
+        <div class="login-logo"><img src="AFF_logo.jpg" alt="Al Furqan Forum Logo" style="width: 100%; height: 100%; object-fit: cover; border-radius: 20px;"></div>
+        <h1 class="login-title">Al Furqan Forum</h1>
+        <p class="login-subtitle">Attendance Management System</p>
+        
+        <div class="login-form">
+            <input type="text" id="username" class="login-input" placeholder="Username" autocomplete="username">
+            <input type="password" id="password" class="login-input" placeholder="Password" autocomplete="current-password">
+            <button type="button" id="loginBtn" class="login-btn"><i class="fas fa-sign-in-alt"></i> Sign In</button>
         </div>
+        
+        <div class="login-error" id="loginError">
+            Invalid username or password. Please try again.
+        </div>
+    </div>
 
-        <div class="deployment-info" id="deploymentInfo">
-            <h4 id="deploymentTitle">🚀 Production Ready</h4>
-            <p id="deploymentMessage">This app is optimized for Vercel deployment with CORS handling.</p>
+    <!-- Main Application -->
+    <div class="main-container" id="mainContainer">
+        <button type="button" id="logoutBtn" class="logout-btn"><i class="fas fa-sign-out-alt"></i> Logout</button>
+        
+        <div class="header">
+            <div class="logo"><img src="AFF_logo.jpg" alt="Al Furqan Forum Logo" style="width: 100%; height: 100%; object-fit: cover; border-radius: 18px;"></div>
+            <h1>Attendance System</h1>
+            <p class="subtitle">Upload and process attendance files</p>
         </div>
         
         <div class="file-upload-area" id="fileUploadArea">
-            <div class="upload-icon">📁</div>
+            <div class="upload-icon"><i class="fas fa-file-upload"></i></div>
             <p class="upload-text">Drop your attendance .txt file here</p>
             <p class="upload-subtext">or click to browse</p>
             <input type="file" id="fileInput" accept=".txt" />
         </div>
 
-        <!-- DATE SELECTOR - ALWAYS VISIBLE -->
         <div class="date-selector-card">
             <div class="date-selector-header">
-                <span class="calendar-icon">📅</span>
+                <span class="calendar-icon"><i class="fas fa-calendar-alt"></i></span>
                 <h4>Select Attendance Date</h4>
             </div>
             <div class="date-input-row">
                 <input type="date" id="attendanceDate" class="date-input" title="Select attendance date">
-                <button type="button" id="todayBtn" class="today-btn">📅 Today</button>
+                <button type="button" id="todayBtn" class="today-btn"><i class="fas fa-calendar-day"></i> Today</button>
             </div>
             <div class="date-display">
                 Selected: <span id="datePreview" class="date-preview-text">Not selected</span>
@@ -490,7 +593,7 @@
         </div>
 
         <div class="file-info" id="fileInfo">
-            <h4>✅ File Ready for Processing</h4>
+            <h4><i class="fas fa-check-circle"></i> File Ready for Processing</h4>
             <div class="file-details">
                 <strong>File Name:</strong>
                 <span id="fileName"></span>
@@ -506,49 +609,46 @@
         </div>
 
         <button class="upload-btn" id="uploadBtn" disabled>
-            🚀 Process Attendance Data
+            <i class="fas fa-upload"></i> Process Attendance Data
         </button>
 
         <div class="loading" id="loading">
             <div class="spinner"></div>
             <p><strong>Processing your file...</strong></p>
-            <p>Sending data to n8n workflow</p>
+            <p>Sending data to workflow</p>
         </div>
 
         <div class="result" id="result">
             <h3 id="resultTitle"></h3>
             <div id="resultMessage"></div>
         </div>
-
-        <div class="cors-troubleshoot" id="corsHelp">
-            <h4>🛠️ CORS Configuration Required</h4>
-            <p><strong>To fix this issue, configure your n8n webhook:</strong></p>
-            <ol>
-                <li>Open your n8n Webhook node</li>
-                <li>Click <code>Add Option</code> → <code>Allowed Origins (CORS)</code></li>
-                <li>Set the value to: <code id="suggestedOrigin">*</code></li>
-                <li>Save the workflow and ensure it's <strong>ACTIVE</strong></li>
-                <li>Try uploading again</li>
-            </ol>
-            <p><small><strong>Current origin:</strong> <span id="currentOrigin"></span></small></p>
-        </div>
-
-        <div class="environment-detector">
-            <strong>Environment:</strong> <span id="environmentInfo"></span><br>
-            <strong>Webhook URL:</strong> <span id="webhookUrl"></span>
-        </div>
     </div>
 
     <script>
-        // Configuration - Now using WORKING Production URL
-        const N8N_WEBHOOK_URL = 'https://n8n.srv970132.hstgr.cloud/webhook/cc312adc-af32-48d3-88c2-af22dae286ff'; // Production - WORKING!
+        // Configuration - Backend remains exactly the same
+        const N8N_WEBHOOK_URL = 'https://n8n.srv970132.hstgr.cloud/webhook/cc312adc-af32-48d3-88c2-af22dae286ff';
+
+        // Authentication
+        const CREDENTIALS = {
+            username: 'Alfurqanforum',
+            password: 'Attendance123'
+        };
 
         // Global variables
         let uploadedFile = null;
         let fileContent = '';
         let foundRollNumbers = [];
+        let isLoggedIn = false;
 
         // DOM elements
+        const loginContainer = document.getElementById('loginContainer');
+        const mainContainer = document.getElementById('mainContainer');
+        const usernameInput = document.getElementById('username');
+        const passwordInput = document.getElementById('password');
+        const loginBtn = document.getElementById('loginBtn');
+        const loginError = document.getElementById('loginError');
+        const logoutBtn = document.getElementById('logoutBtn');
+
         const fileUploadArea = document.getElementById('fileUploadArea');
         const fileInput = document.getElementById('fileInput');
         const fileInfo = document.getElementById('fileInfo');
@@ -558,54 +658,78 @@
         const uploadBtn = document.getElementById('uploadBtn');
         const loading = document.getElementById('loading');
         const result = document.getElementById('result');
-        const corsHelp = document.getElementById('corsHelp');
-        const deploymentInfo = document.getElementById('deploymentInfo');
 
-        // Environment detection
-        function detectEnvironment() {
-            const isLocalhost = window.location.hostname === 'localhost' || 
-                               window.location.hostname === '127.0.0.1' || 
-                               window.location.hostname === '';
-            const isVercel = window.location.hostname.includes('vercel.app');
-            const isFile = window.location.protocol === 'file:';
+        // Authentication functions
+        function handleLogin() {
+            const username = usernameInput.value.trim();
+            const password = passwordInput.value.trim();
 
-            let env, origin, deploymentClass = '';
-
-            if (isFile) {
-                env = 'Local File';
-                origin = 'file://';
-                deploymentClass = 'local';
-                document.getElementById('deploymentTitle').textContent = '⚠️ Local File System';
-                document.getElementById('deploymentMessage').textContent = 'Running from local file. Deploy to Vercel for best experience.';
-            } else if (isLocalhost) {
-                env = 'Local Development';
-                origin = window.location.origin;
-                deploymentClass = 'local';
-                document.getElementById('deploymentTitle').textContent = '🔧 Local Development';
-                document.getElementById('deploymentMessage').textContent = 'Testing locally. Ready for Vercel deployment.';
-            } else if (isVercel) {
-                env = 'Vercel Production';
-                origin = window.location.origin;
-                document.getElementById('deploymentTitle').textContent = '🚀 Production (Vercel)';
-                document.getElementById('deploymentMessage').innerHTML = `Deployed on Vercel ✅<br><small>URL: ${origin}</small>`;
+            if (username === CREDENTIALS.username && password === CREDENTIALS.password) {
+                isLoggedIn = true;
+                loginContainer.style.display = 'none';
+                mainContainer.style.display = 'block';
+                loginError.style.display = 'none';
+                
+                // Store login state
+                sessionStorage.setItem('alfurqan_logged_in', 'true');
             } else {
-                env = 'Production';
-                origin = window.location.origin;
+                loginError.style.display = 'block';
+                passwordInput.value = '';
             }
-
-            deploymentInfo.className = `deployment-info ${deploymentClass}`;
-            document.getElementById('environmentInfo').textContent = env;
-            document.getElementById('currentOrigin').textContent = origin;
-            document.getElementById('suggestedOrigin').textContent = origin === 'file://' ? '*' : origin;
-            document.getElementById('webhookUrl').textContent = N8N_WEBHOOK_URL;
-
-            return { env, origin, isFile, isLocalhost, isVercel };
         }
 
-        // Initialize environment detection
-        const environment = detectEnvironment();
+        function handleLogout() {
+            isLoggedIn = false;
+            loginContainer.style.display = 'block';
+            mainContainer.style.display = 'none';
+            usernameInput.value = '';
+            passwordInput.value = '';
+            loginError.style.display = 'none';
+            
+            // Clear login state
+            sessionStorage.removeItem('alfurqan_logged_in');
+            
+            // Reset application state
+            resetApplication();
+        }
 
-        // Date handling
+        function resetApplication() {
+            uploadedFile = null;
+            fileContent = '';
+            foundRollNumbers = [];
+            fileInfo.classList.remove('show');
+            result.classList.remove('show');
+            loading.classList.remove('show');
+            fileInput.value = '';
+        }
+
+        function checkLoginState() {
+            const loggedIn = sessionStorage.getItem('alfurqan_logged_in');
+            if (loggedIn === 'true') {
+                isLoggedIn = true;
+                loginContainer.style.display = 'none';
+                mainContainer.style.display = 'block';
+            }
+        }
+
+        // Login event listeners
+        loginBtn.addEventListener('click', handleLogin);
+        logoutBtn.addEventListener('click', handleLogout);
+
+        // Handle Enter key in login form
+        passwordInput.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                handleLogin();
+            }
+        });
+
+        usernameInput.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                passwordInput.focus();
+            }
+        });
+
+        // Date handling functions (keeping backend logic exactly the same)
         function setTodayDate() {
             const today = new Date();
             const formattedDate = today.toISOString().split('T')[0];
@@ -616,7 +740,6 @@
         function updateDatePreview() {
             const dateValue = attendanceDate.value;
             if (dateValue) {
-                // Parse the date string directly without timezone issues
                 const [year, month, day] = dateValue.split('-');
                 const formattedDate = `${day}/${month}/${year}`;
                 datePreview.textContent = formattedDate;
@@ -627,7 +750,6 @@
 
         function formatDateForAPI(dateString) {
             if (!dateString) return null;
-            // Parse the date string directly without timezone issues
             const [year, month, day] = dateString.split('-');
             return `${day}/${month}/${year}`;
         }
@@ -638,9 +760,9 @@
 
         // Set today as default and make upload button available
         setTodayDate();
-        uploadBtn.disabled = false; // Enable button by default since date is set
+        uploadBtn.disabled = false;
 
-        // File upload handling
+        // File upload handling (keeping backend logic exactly the same)
         fileUploadArea.addEventListener('click', () => fileInput.click());
         fileUploadArea.addEventListener('dragover', handleDragOver);
         fileUploadArea.addEventListener('drop', handleDrop);
@@ -685,7 +807,6 @@
                 fileContent = e.target.result;
                 displayFileInfo(file);
                 analyzeRollNumbers();
-                // Button is already enabled since date is set
             };
             
             reader.onerror = function() {
@@ -710,11 +831,10 @@
         }
 
         function analyzeRollNumbers() {
-            // Enhanced regex patterns for different roll number formats
             const rollRegexes = [
-                /AFF-A[QW][WFM][MF]?25?-\d{3}/g,        // AFF-AWFM25-001
-                /AFF-[A-Z]{2,3}[0-9]{2,4}-[0-9]{3}/g,   // AFF-AWF25-001
-                /[A-Z]{3,4}-[A-Z]{2,4}[0-9]{2,4}-[0-9]{3}/g // Generic pattern
+                /AFF-A[QW][WFM][MF]?25?-\d{3}/g,
+                /AFF-[A-Z]{2,3}[0-9]{2,4}-[0-9]{3}/g,
+                /[A-Z]{3,4}-[A-Z]{2,4}[0-9]{2,4}-[0-9]{3}/g
             ];
             
             const allMatches = new Set();
@@ -727,7 +847,6 @@
             
             document.getElementById('rollCount').textContent = foundRollNumbers.length;
             
-            // Display found roll numbers
             const rollContainer = document.getElementById('rollNumbers');
             const displayLimit = 20;
             
@@ -745,7 +864,7 @@
             }
         }
 
-        // Upload button handler
+        // Upload button handler (keeping backend logic exactly the same)
         uploadBtn.addEventListener('click', sendToWebhook);
 
         async function sendToWebhook() {
@@ -767,7 +886,6 @@
 
             loading.classList.add('show');
             result.classList.remove('show');
-            corsHelp.classList.remove('show');
             uploadBtn.disabled = true;
 
             const formattedDate = formatDateForAPI(selectedDate);
@@ -777,11 +895,11 @@
                 fileContent: fileContent,
                 rollNumbers: foundRollNumbers,
                 rollCount: foundRollNumbers.length,
-                attendanceDate: formattedDate, // Format: "15/09/2025"
-                attendanceDateISO: selectedDate, // ISO format for backup: "2025-09-15"
+                attendanceDate: formattedDate,
+                attendanceDateISO: selectedDate,
                 uploadTime: new Date().toISOString(),
-                environment: environment.env,
-                origin: environment.origin,
+                environment: 'Production',
+                origin: window.location.origin,
                 fileSize: uploadedFile.size,
                 metadata: {
                     userAgent: navigator.userAgent,
@@ -792,26 +910,20 @@
             };
 
             try {
-                console.log('Sending payload to n8n:', payload);
-                
                 const response = await fetch(N8N_WEBHOOK_URL, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
                         'Accept': 'application/json, text/plain, */*',
-                        'Origin': environment.origin
+                        'Origin': window.location.origin
                     },
                     body: JSON.stringify(payload),
                     mode: 'cors',
                     credentials: 'omit'
                 });
 
-                console.log('Response received:', response.status, response.statusText);
-                console.log('Response headers:', Object.fromEntries(response.headers.entries()));
-
                 if (response.ok) {
                     const responseData = await response.text();
-                    console.log('Response data:', responseData);
                     
                     let parsedData;
                     try {
@@ -837,26 +949,20 @@
                     error.message.includes('Failed to fetch') ||
                     error.message.includes('CORS') ||
                     error.message.includes('NetworkError')) {
-                    showCorsError(error);
+                    showResult('error', '🚫 Connection Error', {
+                        error: 'Unable to connect to the server. Please check your internet connection and try again.',
+                        rollCount: foundRollNumbers.length
+                    });
                 } else {
                     showResult('error', '❌ Upload Failed', {
                         error: error.message,
-                        suggestion: 'Check your n8n workflow is active and the webhook URL is correct.'
+                        suggestion: 'Please try again or contact support if the issue persists.'
                     });
                 }
             }
 
             loading.classList.remove('show');
             uploadBtn.disabled = false;
-        }
-
-        function showCorsError(error) {
-            showResult('error', '🚫 CORS Configuration Required', {
-                error: error.message,
-                rollCount: foundRollNumbers.length,
-                needsConfig: true
-            });
-            corsHelp.classList.add('show');
         }
 
         function showResult(type, title, data) {
@@ -873,7 +979,7 @@
                     <p><strong>Attendance Date:</strong> ${data.attendanceDate}</p>
                     <p><strong>Processing time:</strong> ${new Date().toLocaleTimeString()}</p>
                     ${data.response && data.response.message ? `<p><strong>Response:</strong> ${data.response.message}</p>` : ''}
-                    <p><em>Attendance data has been sent to your n8n workflow for further processing.</em></p>
+                    <p><em>Attendance data has been processed successfully.</em></p>
                 `;
             } else {
                 message = `
@@ -881,18 +987,15 @@
                     <p>${data.error}</p>
                     ${data.rollCount ? `<p><strong>Roll numbers ready:</strong> ${data.rollCount}</p>` : ''}
                     ${data.suggestion ? `<p><em>${data.suggestion}</em></p>` : ''}
-                    ${data.needsConfig ? '<p><strong>⬇️ See configuration steps below</strong></p>' : ''}
                 `;
             }
             
             document.getElementById('resultMessage').innerHTML = message;
         }
 
-        // Initialize
-        console.log('Attendance Upload System initialized');
-        console.log('Environment:', environment);
-        console.log('Webhook URL:', N8N_WEBHOOK_URL);
-        console.log('Date selector should be visible!');
+        // Initialize application
+        checkLoginState();
+        console.log('Al Furqan Forum Attendance System initialized');
     </script>
 </body>
 </html>
