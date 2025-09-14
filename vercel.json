@@ -1,8 +1,12 @@
 {
-  "rewrites": [
-    {
-      "source": "/",
-      "destination": "/index.html"
-    }
-  ]
-}
+     "routes": [
+       {
+         "src": "/AFF_logo.jpg",
+         "dest": "/AFF_logo.jpg"
+       },
+       {
+         "src": "/",
+         "dest": "/index.html"
+       }
+     ]
+   }
