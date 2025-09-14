@@ -1,12 +1,12 @@
 {
-     "routes": [
-       {
-         "src": "/AFF_logo.jpg",
-         "dest": "/AFF_logo.jpg"
-       },
-       {
-         "src": "/",
-         "dest": "/index.html"
-       }
-     ]
-   }
+  "functions": {
+    "app.js": {
+      "runtime": "@vercel/node"
+    }
+  },
+  "routes": [
+    { "src": "/AFF_logo.jpg", "dest": "/AFF_logo.jpg" },
+    { "src": "/", "dest": "/index.html" },
+    { "src": "/(.*)", "dest": "/$1" }
+  ]
+}
